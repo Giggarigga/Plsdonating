@@ -1,0 +1,110 @@
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+local screenGui = Instance.new("ScreenGui", playerGui)
+
+local mainFrame = Instance.new("Frame", screenGui)
+mainFrame.Size = UDim2.new(0, 300, 0, 230)
+mainFrame.Position = UDim2.new(0.5, -150, 0.4, 0)
+mainFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+mainFrame.BorderSizePixel = 2
+mainFrame.Active = true
+mainFrame.Draggable = true  
+
+local usernameBox = Instance.new("TextBox", mainFrame)
+usernameBox.Size = UDim2.new(0.8, 0, 0, 30)
+usernameBox.Position = UDim2.new(0.1, 0, 0.1, 0)
+usernameBox.PlaceholderText = "Enter Username"
+usernameBox.Text = ""
+usernameBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+usernameBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+local robuxBox = Instance.new("TextBox", mainFrame)
+robuxBox.Size = UDim2.new(0.8, 0, 0, 30)
+robuxBox.Position = UDim2.new(0.1, 0, 0.3, 0)
+robuxBox.PlaceholderText = "Enter Robux Amount"
+robuxBox.Text = ""
+robuxBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+robuxBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+local donateButton = Instance.new("TextButton", mainFrame)
+donateButton.Size = UDim2.new(0.8, 0, 0, 40)
+donateButton.Position = UDim2.new(0.1, 0, 0.6, 0)
+donateButton.Text = "Donate"
+donateButton.BackgroundColor3 = Color3.fromRGB(0, 170, 0)
+donateButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+local watermark = Instance.new("TextLabel", mainFrame)
+watermark.Size = UDim2.new(1, 0, 0, 20)
+watermark.Position = UDim2.new(0, 0, 0.9, 0)
+watermark.Text = "Pls Donate Script | Made By ScriptingAir"
+watermark.TextColor3 = Color3.fromRGB(200, 200, 200)
+watermark.BackgroundTransparency = 1
+watermark.Font = Enum.Font.SourceSans
+watermark.TextScaled = true
+
+
+local function formatNumber(number)
+    local formatted = tostring(number)
+    formatted = formatted:reverse():gsub("(%d%d%d)", "%1,"):reverse()
+    if formatted:sub(1, 1) == "," then
+        formatted = formatted:sub(2)
+    end
+    return formatted
+end
+
+
+local function createDonationPopup(username, robux_amount)
+    local ScreenGui = playerGui:FindFirstChild("ScreenGui")
+    local Donation_Text = username.." DONATED " ..formatNumber(robux_amount).. “ TO YOU!"
+    local clone = playerGui.UITemplates.donationPopup:Clone()
+
+
+    player.leaderstats.Raised.Value = player.leaderstats.Raised.Value + robux_amount
+
+    clone.Message.Text = Donation_Text
+    clone.Transparency = 1
+    clone.UIScale.Scale = 0
+    clone.Parent = ScreenGui.Popups
+
+
+    TweenService:Create(clone, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {
+        Transparency = 0;
+    }):Play()
+
+    TweenService:Create(clone.UIScale, TweenInfo.new(0.3, Enum.EasingStyle.Back), {
+        Scale = 1;
+    }):Play()
+
+    TweenService:Create(clone.Message, TweenInfo.new(1, Enum.EasingStyle.Quint), {
+        MaxVisibleGraphemes = #Donation_Text;
+    }):Play()
+
+    wait(4)
+
+    TweenService:Create(clone, TweenInfo.new(0.25, Enum.EasingStyle.Quint), {
+        Transparency = 1;
+    }):Play()
+
+    TweenService:Create(clone.UIScale, TweenInfo.new(0.5, Enum.EasingStyle.Back), {
+        Scale = 0;
+    }):Play()
+
+    wait(0.5)
+    clone:Destroy()
+end
+
+
+donateButton.MouseButton1Click:Connect(function()
+    local username = usernameBox.Text
+    local robux_amount = tonumber(robuxBox.Text)
+
+    if username ~= "" and robux_amount and robux_amount > 0 then
+        createDonationPopup(username, robux_amount)
+    else
+        print("Invalid username or robux amount")
+    end
+end)
